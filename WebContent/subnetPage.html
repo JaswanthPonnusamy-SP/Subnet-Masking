@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>subnet masking</title>
+
+</head>
+<body>
+<br>
+<div style="color: green;font-size: 35px;"><center>SUBNETTING IP ADDRESS</center></div>
+<br>
+<hr style="opacity: 0.6">
+
+<div style="color: black;opacity: 0.6;margin-left: 545px;margin-top: 60px;">Enter the IP address and CIDR notation to identify maximum hosts in the given IP address.</div>
+<input type="text" id="ipaddress" name="ipaddress" value="" placeholder="Enter the Ip" style="
+    background-color: #eefdec;opacity: 0.9;
+    border:none;text-align: center;font-size: 13px;color: black;border-radius: 5px;height: 32px;width: 250px;margin-left: 620px;
+    margin-top: 50px;"><span style="font-size: 30px;margin-left: 20px;color: green;opacity: 0.7">/</span>
+    <input type="text" id="cidr" name="cidr" value="" placeholder="CIDR" style="
+    background-color: #eefdec;opacity: 0.9;
+    border:none;text-align: center;font-size: 13px;color: black;border-radius: 5px;height: 32px;width: 100px;margin-left: 20px;">
+    <br>
+<button style="margin-top: 30px;height: 40px;width: 100px;border-radius: 10px;background-color: #9ff494;color: white;font-size: 18px;font-family: sans-serif;margin-left: 780px;" onclick="find_click()">Find</button>
+
+<div id="error" style="display: none;color: red;opacity: 0.6;margin-left: 775px;
+    margin-top: 10px;"></div>
+
+<p style="margin-top: 70px;"><center  id="para" style="color: green;font-family: sans-serif;display:none;">SUBNET FINDINGS</center></p>
+<div id="box" style="margin-left: 500px;
+    border: ridge;
+    margin-top: 30px;
+    margin-right: 500px;opacity: 0.7;display: none;"></div>
+<p id="para2" style="margin-top:30px;"><center style="color:green;">ABOUT<center></p>
+<p id="para3"><div style="color: black;
+    opacity: 0.8;
+    height: 100px;
+    width: 500px;
+    margin-top: 30px;
+    margin-left: 20px;">The IP Subnet Mask Calculator enables subnet network calculations using network class, IP address, subnet mask, subnet bits, mask bits, maximum required IP subnets and maximum required hosts per subnet.</div></p>
+
+<!-- <script type="text/javascript">
+	
+var query=window.location.href;
+var array=query.split("?");
+if(array.length==2){
+
+var array2=array[1].split("=");
+
+if(array2[0]=="ip"){
+var text1=document.createTextNode("invalid ip address.");
+document.getElementById("error").appendChild(text1);
+document.getElementById("error").style.display="";
+setTimeout(function(){ window.location.href="http://172.24.126.253:8012/subnet_masking/subnetPage.html"; }, 3000);
+}
+
+else if(array2[0]=="cidr"){
+var text2=document.createTextNode("invalid cidr address.");
+document.getElementById("error").appendChild(text2);
+document.getElementById("error").style.display="";
+setTimeout(function(){ window.location.href="http://172.24.126.253:8012/subnet_masking/subnetPage.html"; }, 3000);
+}
+
+
+}
+
+</script> -->
+
+<script type="text/javascript">
+	
+function find_click(){
+
+var ip=document.getElementById('ipaddress').value;
+var cidr=document.getElementById('cidr').value;
+var xhr=new XMLHttpRequest();
+var url="http://172.24.119.192:8012/findsubnet?ipaddress="+ip+"&cidr="+cidr;
+
+xhr.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200){
+
+var value=JSON.parse(this.responseText);
+console.log(value.ip);
+if(value.hasOwnProperty("ip")){
+	document.getElementById("error").innerHTML="";
+	var text1=document.createTextNode("invalid ip address.");
+	document.getElementById("error").appendChild(text1);
+	document.getElementById("error").style.display="";
+	setTimeout(function(){ document.getElementById("error").style.display="none"; }, 3000);
+}
+
+else if(value.hasOwnProperty("cidr")){
+	document.getElementById("error").innerHTML="";
+	var text1=document.createTextNode("invalid cidr notation.");
+	document.getElementById("error").appendChild(text1);
+	document.getElementById("error").style.display="";
+	setTimeout(function(){ document.getElementById("error").style.display="none"; }, 3000);
+}
+
+else{
+document.getElementById("box").innerHTML="";
+var a=document.getElementById("box");
+
+var b = document.createElement("div"); 
+b.setAttribute("id", "network_Id");
+b.setAttribute("style", "margin-left:230px;margin-top:20px;");
+var tex1 = document.createTextNode("Network Id \xa0\xa0: "+value.network_Id);
+b.appendChild(tex1);
+
+var c = document.createElement("div"); 
+c.setAttribute("id", "broadcast_Id");
+c.setAttribute("style", "margin-left:230px;margin-top:20px;");
+var tex2 = document.createTextNode("Broadcast Id : "+value.broadcast_Id);
+c.appendChild(tex2);
+
+var d = document.createElement("div"); 
+d.setAttribute("id", "hostmin");
+d.setAttribute("style", "margin-left:230px;margin-top:20px;");
+var tex3 = document.createTextNode("MinHost Id \xa0\xa0: "+value.hostmin);
+d.appendChild(tex3);
+
+var e = document.createElement("div"); 
+e.setAttribute("id", "hostmax");
+e.setAttribute("style", "margin-left:230px;margin-top:20px;");
+var tex4 = document.createTextNode("MaxHost Id \xa0\xa0: "+value.hostmax);
+e.appendChild(tex4);
+
+var f = document.createElement("div"); 
+f.setAttribute("id", "class");
+f.setAttribute("style", "margin-left:230px;margin-top:20px;");
+var tex5 = document.createTextNode("Subnet Class : "+value.class);
+f.appendChild(tex5);
+
+var g = document.createElement("div"); 
+g.setAttribute("id", "hosts");
+g.setAttribute("style", "margin-left:230px;margin-top:20px;margin-bottom:20px;");
+var tex6 = document.createTextNode("Hosts (max) \xa0: "+value.hosts);
+g.appendChild(tex6);
+
+box.appendChild(b);
+box.appendChild(c);
+box.appendChild(d);
+box.appendChild(e);
+box.appendChild(f);
+box.appendChild(g);
+
+box.style.display="";
+document.getElementById("para").style.display="";
+    }
+}
+}
+
+xhr.open("GET",url,true);
+xhr.send();
+
+
+}
+
+</script>
+
+</body>
+</html>
